@@ -1,0 +1,23 @@
+name: 'LaunchDarkly Code References'
+description: 'Find references to feature flags in your code.'
+author: 'LaunchDarkly'
+branding:
+  icon: toggle-right
+  color: gray-dark
+inputs: 
+  ld-proj-key:
+    description: 'Key of the LaunchDarkly project associated with this repository'
+    default: 'YOUR_PROJECT_KEY'
+    required: true
+  ld-access-token: 
+    description: 'Token with write access to LaunchDarkly project'
+    required: true
+  github-token:
+    description: 'Token to access your GitHub repository. This is only needed if the code has not yet been checkout out in a prior step.'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    LD_PROJ_KEY: ${{ inputs.ld-proj-key }}
+    LD_ACCESS_TOKEN: ${{ inputs.ld-access-token }}
+    GITHUB_TOKEN: ${{ inputs.github-token }}
