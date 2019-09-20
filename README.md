@@ -20,7 +20,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: LaunchDarkly Code References
-      uses: launchdarkly/find-code-references@v2
+      uses: launchdarkly/find-code-references@v3
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         LD_ACCESS_TOKEN: ${{ secrets.LD_ACCESS_TOKEN }}
