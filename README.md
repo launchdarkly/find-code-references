@@ -18,18 +18,18 @@ jobs:
     name: LaunchDarkly Code References
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: LaunchDarkly Code References
-      uses: launchdarkly/find-code-references@v4
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        LD_ACCESS_TOKEN: ${{ secrets.LD_ACCESS_TOKEN }}
-        LD_PROJ_KEY: YOUR_PROJECT_KEY
+      uses: launchdarkly/find-code-references@v5
+      with:
+        githubToken: ${{ secrets.GITHUB_TOKEN }}
+        accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
+        projKey: YOUR_PROJECT_KEY
 ```
 
 We strongly recommend that you update the second `uses` attribute value to reference the latest tag in the [launchdarkly/find-code-references repository](https://github.com/launchdarkly/find-code-references). This will pin your workflow to a particular version of the `launchdarkly/find-code-references` action.
 
-If you already have a `action.yml` file, copy and paste the above `launchDarklyCodeReferences` job declaration into the `jobs` section in your existing `action.yml` file.  If you wish to verify that you've pasted the above correctly, you can go into the visual editor and ensure that there are no syntax errors. `LD_PROJ_KEY` refers to the key of the LaunchDarkly project associated with this repository.
+If you already have a `action.yml` file, copy and paste the above `launchDarklyCodeReferences` job declaration into the `jobs` section in your existing `action.yml` file.  If you wish to verify that you've pasted the above correctly, you can go into the visual editor and ensure that there are no syntax errors. `projKey` refers to the key of the LaunchDarkly project associated with this repository.
 
 Commit this file under a new branch.  Submit as a PR to your code reviewers to be merged into your master branch.  You do not need to have this branch merged into the master for code references to appear in the LaunchDarkly UI for your flags; code references will appear for this newly created branch.
 
