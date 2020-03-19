@@ -5,19 +5,42 @@ branding:
   icon: toggle-right
   color: gray-dark
 inputs:
-  ld-proj-key:
-    description: 'Key of the LaunchDarkly project associated with this repository'
-    default: 'YOUR_PROJECT_KEY'
+  projKey:
+    description: 'Key of the LaunchDarkly project associated with this repository.'
     required: true
-  ld-access-token:
-    description: 'Token with write access to LaunchDarkly project'
+  accessToken:
+    description: 'Token with write access to LaunchDarkly project.'
     required: true
-  github-token:
+  baseUri:
+    description: 'Set the base URL of the LaunchDarkly server for this configuration.'
+    default: 'https://app.launchdarkly.com'
+  contextLines:
+    description:
+      The number of context lines above and below a code reference for the job to send to LaunchDarkly. By default, the flag finder will not send any context lines to LaunchDarkly. If < 0, no source code will be sent to LaunchDarkly. If 0, only the lines containing flag references will be sent. If > 0, will send that number of context lines above and below the flag reference. A maximum of 5 context lines may be provided.
+    default: 2
+  debug:
+    description: Enables verbose debug logging.	
+    default: false
+  delimiters:
+    description: Specifies additional delimiters used to match flag keys. Must be a non-control ASCII character. If more than one character is provided in `delimiters`, each character will be treated as a separate delimiter. Will only match flag keys with surrounded by any of the specified delimeters. This option may also be specified multiple times for multiple delimiters. By default, only flags delimited by single-quotes, double-quotes, and backticks will be matched.
+  exclude:
+    description:
+      A regular expression (PCRE) defining the files, file types, and directories which the job should exclude. Partial matches are allowed. 
+  ignoreServiceErrors:
+    description: If enabled, the scanner will terminate with exit code 0 when the LaunchDarkly API is unreachable or returns an unexpected response.
+    default: false
+  githubToken:
     description: 'Token to access your GitHub repository. This is only needed if the code has not yet been checkout out in a prior step.'
 runs:
   using: 'docker'
   image: 'Dockerfile'
   env:
-    LD_PROJ_KEY: ${{ inputs.ld-proj-key }}
-    LD_ACCESS_TOKEN: ${{ inputs.ld-access-token }}
-    GITHUB_TOKEN: ${{ inputs.github-token }}
+    LD_PROJ_KEY: ${{ inputs.projKey }}
+    LD_ACCESS_TOKEN: ${{ inputs.accessToken }}
+    LD_BASE_URI: ${{ inputs.baseUri }}
+    LD_CONTEXT_LINES: ${{ inputs.contextLines }}
+    LD_DEBUG: ${{ inputs.debug }}
+    LD_DELIMITERS: ${{ inputs.delimiters }}
+    LD_EXCLUDE: ${{ inputs.exclude }}
+    LD_IGNORE_SERVICE_ERRORS: ${{ inputs.ignoreServiceErrors }}
+    GITHUB_TOKEN: ${{ inputs.githubToken }}
