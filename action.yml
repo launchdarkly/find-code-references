@@ -21,8 +21,6 @@ inputs:
   debug:
     description: Enables verbose debug logging.	
     default: false
-  delimiters:
-    description: Specifies additional delimiters used to match flag keys. Must be a non-control ASCII character. If more than one character is provided in `delimiters`, each character will be treated as a separate delimiter. Will only match flag keys with surrounded by any of the specified delimeters. This option may also be specified multiple times for multiple delimiters. By default, only flags delimited by single-quotes, double-quotes, and backticks will be matched.
   ignoreServiceErrors:
     description: If enabled, the scanner will terminate with exit code 0 when the LaunchDarkly API is unreachable or returns an unexpected response.
     default: false
@@ -37,6 +35,5 @@ runs:
     LD_BASE_URI: ${{ inputs.baseUri }}
     LD_CONTEXT_LINES: ${{ inputs.contextLines }}
     LD_DEBUG: ${{ inputs.debug }}
-    LD_DELIMITERS: ${{ inputs.delimiters }}
     LD_IGNORE_SERVICE_ERRORS: ${{ inputs.ignoreServiceErrors }}
     GITHUB_TOKEN: ${{ inputs.githubToken }}
