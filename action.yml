@@ -38,5 +38,5 @@ runs:
     LD_CONTEXT_LINES: ${{ inputs.contextLines }}
     LD_DEBUG: ${{ inputs.debug }}
     LD_IGNORE_SERVICE_ERRORS: ${{ inputs.ignoreServiceErrors }}
-    LD_LOOKBACK: ${ inputs.lookback }}
+    LD_LOOKBACK: ${{ inputs.lookback }}
     GITHUB_TOKEN: ${{ inputs.githubToken }}
