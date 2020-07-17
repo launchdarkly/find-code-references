@@ -26,6 +26,8 @@ inputs:
     default: false
   githubToken:
     description: 'Token to access your GitHub repository. This is only needed if the code has not yet been checkout out in a prior step.'
+  lookback:
+    default: 10
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -36,4 +38,5 @@ runs:
     LD_CONTEXT_LINES: ${{ inputs.contextLines }}
     LD_DEBUG: ${{ inputs.debug }}
     LD_IGNORE_SERVICE_ERRORS: ${{ inputs.ignoreServiceErrors }}
+    LD_LOOKBACK: ${ inputs.lookback }}
     GITHUB_TOKEN: ${{ inputs.githubToken }}
