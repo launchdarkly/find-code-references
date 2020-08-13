@@ -4,10 +4,10 @@ This GitHub Action is a utility that automatically populates code references in 
 
 ## Configuration
 
-Once you've [created a LaunchDarkly access token](https://docs.launchdarkly.com/docs/git-code-references#section-creating-an-access-token), store the newly created access token as a repository secret titled `LD_ACCESS_TOKEN`. Under Settings > Secrets in your GitHub repo, you'll see a link to "Add a new secret".  Click that and paste in your access token and click "Save secret". 
+Once you've [created a LaunchDarkly access token](https://docs.launchdarkly.com/docs/git-code-references#section-creating-an-access-token), store the newly created access token as a repository secret titled `LD_ACCESS_TOKEN`. Under Settings > Secrets in your GitHub repo, you'll see a link to "Add a new secret".  Click that and paste in your access token and click "Save secret".
 
 (For help storing this see the [GitHub docs](https://help.github.com/en/articles/creating-a-github-action).)
- 
+
 Next, create a new Actions workflow in your selected GitHub repository. If you don't already have a workflow file, you'll need to create a new file titled `action.yml` in the `.github/workflows` directory of your repository.  Under "Edit new file", paste the following code:
 
 ```yaml
@@ -20,7 +20,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: LaunchDarkly Code References
-      uses: launchdarkly/find-code-references@v5
+      uses: launchdarkly/find-code-references@v7
       with:
         githubToken: ${{ secrets.GITHUB_TOKEN }}
         accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
@@ -43,6 +43,6 @@ If the action fails, there may be a problem with your configuration. To investig
 
 ## Additional Options
 
-Additional configuration options for more environmental variables can be found at the bottom of the [LaunchDarkly GitHub Action documentation](https://docs.launchdarkly.com/docs/github-actions#section-additional-configuration-options).
+Additional configuration options can be found at the bottom of the [LaunchDarkly GitHub Action documentation](https://docs.launchdarkly.com/docs/github-actions#section-additional-configuration-options).
 
 For information about the underlying LaunchDarkly Code References command-line tool, take a look at [this repository](https://github.com/launchdarkly/ld-find-code-refs).
