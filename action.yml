@@ -29,7 +29,8 @@ inputs:
 whether a feature flag was removed from code. May be set to 0 to disabled this feature. Setting this option to a high value will increase search time.'
     default: 10
   githubToken:
-    description: 'Token to access your GitHub repository. This is only needed if the code has not yet been checkout out in a prior step.'
+    description: Token to access your GitHub repository. Since there's a deafult, this is typically not supplied by the user.
+    default: ${{github.token}}
 runs:
   using: 'docker'
   image: 'Dockerfile'
