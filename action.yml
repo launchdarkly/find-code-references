@@ -29,7 +29,7 @@ inputs:
 whether a feature flag was removed from code. May be set to 0 to disabled this feature. Setting this option to a high value will increase search time.'
     default: 10
   githubToken:
-    description: Token to access your GitHub repository. Since there's a deafult, this is typically not supplied by the user.
+    description: Token to access your GitHub repository. Since there's a default, this is typically not supplied by the user.
     default: ${{github.token}}
 runs:
   using: 'docker'
