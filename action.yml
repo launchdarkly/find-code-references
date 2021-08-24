@@ -30,8 +30,6 @@ inputs:
     description: 'Sets the number of Git commits to search in history for
 whether a feature flag was removed from code. May be set to 0 to disabled this feature. Setting this option to a high value will increase search time.'
     default: 10
-  githubToken:
-    description: 'Token to access your GitHub repository. This is only needed if the code has not yet been checkout out in a prior step.'
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -44,4 +42,3 @@ runs:
     LD_DEBUG: ${{ inputs.debug }}
     LD_IGNORE_SERVICE_ERRORS: ${{ inputs.ignoreServiceErrors }}
     LD_LOOKBACK: ${{ inputs.lookback }}
-    GITHUB_TOKEN: ${{ inputs.githubToken }}
