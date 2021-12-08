@@ -42,6 +42,7 @@ runs:
     LD_REPO_NAME: ${{ inputs.repoName }}
     LD_BASE_URI: ${{ inputs.baseUri }}
     LD_CONTEXT_LINES: ${{ inputs.contextLines }}
+    LD_ALLOW_TAGS: ${{ inputs.allowTags }}
     LD_DEBUG: ${{ inputs.debug }}
     LD_IGNORE_SERVICE_ERRORS: ${{ inputs.ignoreServiceErrors }}
     LD_LOOKBACK: ${{ inputs.lookback }}
