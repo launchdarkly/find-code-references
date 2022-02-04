@@ -6,8 +6,8 @@ branding:
   color: gray-dark
 inputs:
   projKey:
-    description: 'Key of the LaunchDarkly project associated with this repository. Found under Account Settings -> Projects in the LaunchDarkly dashboard.'
-    required: true
+    description: 'Key of the LaunchDarkly project associated with this repository. Found under Account Settings -> Projects in the LaunchDarkly dashboard. Cannot be combined with `projects` block in configuration file.'
+    required: false
   accessToken:
     description: 'Token with write access to LaunchDarkly project.'
     required: true

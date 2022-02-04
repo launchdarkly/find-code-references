@@ -4,7 +4,7 @@ This GitHub Action is a utility that automatically populates code references in 
 
 ## Configuration
 
-Once you've [created a LaunchDarkly access token](https://docs.launchdarkly.com/docs/git-code-references#section-creating-an-access-token), store the newly created access token as a repository secret titled `LD_ACCESS_TOKEN`. Under Settings > Secrets in your GitHub repo, you'll see a link to "Add a new secret".  Click that and paste in your access token and click "Save secret".
+Once you've [created a LaunchDarkly access token](https://docs.launchdarkly.com/home/code/github-actions#prerequisites), store the newly created access token as a repository secret titled `LD_ACCESS_TOKEN`. Under Settings > Secrets in your GitHub repo, you'll see a link to "Add a new secret".  Click that and paste in your access token and click "Save secret".
 
 (For help storing this see the [GitHub docs](https://help.github.com/en/articles/creating-a-github-action).)
 
@@ -22,7 +22,7 @@ jobs:
       with:
         fetch-depth: 11 # This value must be set if the lookback configuration option is not disabled for find-code-references. Read more: https://github.com/launchdarkly/ld-find-code-refs#searching-for-unused-flags-extinctions
     - name: LaunchDarkly Code References
-      uses: launchdarkly/find-code-references@v2.4.1
+      uses: launchdarkly/find-code-references@v2.5.0
       with:
         accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
         projKey: YOUR_PROJECT_KEY
@@ -42,6 +42,6 @@ If the action fails, there may be a problem with your configuration. To investig
 
 ## Additional Options
 
-Additional configuration options can be found at the bottom of the [LaunchDarkly GitHub Action documentation](https://docs.launchdarkly.com/docs/github-actions#section-additional-configuration-options).
+Additional configuration options can be found at the bottom of the [LaunchDarkly GitHub Action documentation](https://docs.launchdarkly.com/home/code/github-actions#additional-configuration-options).
 
 For information about the underlying LaunchDarkly Code References command-line tool, take a look at [this repository](https://github.com/launchdarkly/ld-find-code-refs).
