@@ -22,11 +22,11 @@ jobs:
     name: LaunchDarkly Code References
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 10 # This value must be set if the lookback configuration option is not disabled for find-code-references. Read more: https://github.com/launchdarkly/ld-find-code-refs#searching-for-unused-flags-extinctions
     - name: LaunchDarkly Code References
-      uses: launchdarkly/find-code-references@v2.5.7
+      uses: launchdarkly/find-code-references@v2.6.1
       with:
         accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
         projKey: LD_PROJECT_KEY
@@ -34,7 +34,7 @@ jobs:
 
 We strongly recommend that you update the second `uses` attribute value to reference the latest tag in the [launchdarkly/find-code-references repository](https://github.com/launchdarkly/find-code-references). This will pin your workflow to a particular version of the `launchdarkly/find-code-references` action. Also, make sure to change `projKey` to the key of the LaunchDarkly project associated with this repository.
 
-Commit this file under a new branch.  Submit as a PR to your code reviewers to be merged into your master branch.  You do not need to have this branch merged into the master for code references to appear in the LaunchDarkly UI for your flags; code references will appear for this newly created branch.
+Commit this file under a new branch.  Submit as a PR to your code reviewers to be merged into your default branch.  You do not need to have this branch merged into the default branch for code references to appear in the LaunchDarkly UI for your flags; code references will appear for this newly created branch.
 
 As shown in the above example, the workflow should run on the `push` event, and contain an action provided by the [launchdarkly/find-code-references repository](https://github.com/launchdarkly/find-code-references). The `LD_ACCESS_TOKEN` configured in the previous step should be included as a secret, as well as a new environment variable containing your LaunchDarkly project key.
 
@@ -57,11 +57,11 @@ jobs:
     name: LaunchDarkly Code References
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 10 # This value must be set if the lookback configuration option is not disabled for find-code-references. Read more: https://github.com/launchdarkly/ld-find-code-refs#searching-for-unused-flags-extinctions
     - name: LaunchDarkly Code References
-      uses: launchdarkly/find-code-references@v2.5.7
+      uses: launchdarkly/find-code-references@v2.6.1
       with:
         accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
         projKey: LD_PROJECT_KEY
