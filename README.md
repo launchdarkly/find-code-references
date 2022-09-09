@@ -26,7 +26,7 @@ jobs:
       with:
         fetch-depth: 10 # This value must be set if the lookback configuration option is not disabled for find-code-references. Read more: https://github.com/launchdarkly/ld-find-code-refs#searching-for-unused-flags-extinctions
     - name: LaunchDarkly Code References
-      uses: launchdarkly/find-code-references@v2.6.1
+      uses: launchdarkly/find-code-references@v2.6.3
       with:
         accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
         projKey: LD_PROJECT_KEY
@@ -61,7 +61,7 @@ jobs:
       with:
         fetch-depth: 10 # This value must be set if the lookback configuration option is not disabled for find-code-references. Read more: https://github.com/launchdarkly/ld-find-code-refs#searching-for-unused-flags-extinctions
     - name: LaunchDarkly Code References
-      uses: launchdarkly/find-code-references@v2.6.1
+      uses: launchdarkly/find-code-references@v2.6.3
       with:
         accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
         projKey: LD_PROJECT_KEY
@@ -72,8 +72,21 @@ Once your workflow has been created, the best way to confirm that the workflow i
 
 If the action fails, there may be a problem with your configuration. To investigate, dig into the action's logs to view any error messages.
 
-## Additional Options
+<!-- action-docs-inputs -->
+## Inputs
 
-Additional configuration options can be found at the bottom of the [LaunchDarkly GitHub Action documentation](https://docs.launchdarkly.com/home/code/github-actions#additional-configuration-options).
+| parameter | description | required | default |
+| - | - | - | - |
+| accessToken | A token with write access to the LaunchDarkly project. | `true` |  |
+| allowTags | Enable storing references for tags. Lists the tag as a branch. | `false` | false |
+| baseUri | The base URL of the LaunchDarkly server for this configuration. | `false` | https://app.launchdarkly.com |
+| contextLines | The number of context lines above and below a code reference for the job to send to LaunchDarkly. By default, the flag finder will not send any context lines to LaunchDarkly. If < 0, it will send no source code to LaunchDarkly. If 0, it will send only the lines containing flag references. If > 0, it will send that number of context lines above and below the flag reference. You may provide a maximum of 5 context lines. | `false` | 2 |
+| debug | Enable verbose debug logging. | `false` | false |
+| ignoreServiceErrors | If enabled, the scanner will terminate with exit code 0 when the LaunchDarkly API is unreachable or returns an unexpected response. | `false` | false |
+| lookback | Set the number of commits to search in history for whether you removed a feature flag from code. You may set to 0 to disable this feature. Setting this option to a high value will increase search time. | `false` | 10 |
+| projKey | Key of the LaunchDarkly project associated with this repository. Found under Account Settings -> Projects in the LaunchDarkly dashboard. Cannot be combined with `projects` block in configuration file. | `false` |  |
+| repoName | The repository name. Defaults to the current GitHub repository. | `false` |  |
 
-For information about the underlying LaunchDarkly Code References command-line tool, take a look at [this repository](https://github.com/launchdarkly/ld-find-code-refs).
+
+
+<!-- action-docs-inputs -->
