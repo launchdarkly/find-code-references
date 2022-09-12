@@ -17,4 +17,6 @@ jobs:
       uses: launchdarkly/find-code-references@master
       with:
         accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
+        debug: true
+        ignoreServiceErrors: true
         projKey: support-service
