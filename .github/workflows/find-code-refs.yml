@@ -1,4 +1,5 @@
-on: push
+on: [push, workflow_dispatch]
+    
 name: Find LaunchDarkly flag code references
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -20,3 +21,4 @@ jobs:
         debug: true
         ignoreServiceErrors: true
         projKey: support-service
+        allowTags: true
