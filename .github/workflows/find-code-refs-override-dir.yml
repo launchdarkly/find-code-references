@@ -9,15 +9,12 @@ jobs:
     steps:
     - name: Check out this repo
       uses: actions/checkout@v3
-      with:
-        fetch-depth: 10
     - name: Check out repo to scan
       uses: actions/checkout@v3
       with:
         path: repo-to-scan
         repository: launchdarkly/SupportService
         fetch-depth: 10
-        ref: 'jwhite/coderefs-yaml' # test
     - name: LaunchDarkly Code References
       uses: launchdarkly/find-code-references@master
       with:
