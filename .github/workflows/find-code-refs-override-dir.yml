@@ -17,7 +17,7 @@ jobs:
         path: repo-to-scan
         repository: launchdarkly/SupportService
         fetch-depth: 10
-        ref: 99fef7e # test
+        ref: 'jwhite/coderefs-yaml' # test
     - name: LaunchDarkly Code References
       uses: launchdarkly/find-code-references@master
       with:
