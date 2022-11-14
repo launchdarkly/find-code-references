@@ -15,7 +15,7 @@ jobs:
         repository: launchdarkly/SupportService
         fetch-depth: 10
     - name: LaunchDarkly Code References
-      uses: ./
+      uses: launchdarkly/find-code-references@main
       with:
         accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
         debug: true
