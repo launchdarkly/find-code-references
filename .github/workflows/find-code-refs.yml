@@ -17,7 +17,7 @@ jobs:
       with:
         path: repo-to-scan
         repository: launchdarkly/SupportService
-        fetch-depth: 10
+        fetch-depth: 11
     - name: LaunchDarkly Code References
       uses: ./
       with:
