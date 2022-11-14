@@ -10,15 +10,21 @@ jobs:
     name: LaunchDarkly Code References
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Check out this repo
+      uses: actions/checkout@v3
+    - name: Check out repo to scan
+      uses: actions/checkout@v3
       with:
+        path: repo-to-scan
         repository: launchdarkly/SupportService
         fetch-depth: 10
     - name: LaunchDarkly Code References
-      uses: launchdarkly/find-code-references@main
+      uses: ./
       with:
         accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
         debug: true
         ignoreServiceErrors: true
         projKey: support-service
         allowTags: true
+      env:
+        LD_DIR: ${{ github.workspace }}/repo-to-scan
