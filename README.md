@@ -1,4 +1,4 @@
-# LaunchDarkly Code References with GitHub Actions
+.github/workflows# LaunchDarkly Code References with GitHub Actions
 
 This GitHub Action is a utility that automatically populates code references in LaunchDarkly. This is useful for finding references to feature flags in your code, both for reference and for code cleanup.
 
