@@ -13,7 +13,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         repository: launchdarkly/SupportService
-        fetch-depth: 10
+        fetch-depth: 11
     - name: LaunchDarkly Code References
       uses: launchdarkly/find-code-references@main
       with:
@@ -22,3 +22,4 @@ jobs:
         ignoreServiceErrors: true
         projKey: support-service
         allowTags: true
+        prune: true
