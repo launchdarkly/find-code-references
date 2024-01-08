@@ -38,6 +38,10 @@ inputs:
   repoName: 
     description: "The repository name. Defaults to the current GitHub repository."
     required: false
+  prune:
+    default: "false"
+    description: "There is a known issue where the GitHub Action will not prune deleted branch data in private repos. Only enable this if you are running the action in a public repo."
+    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -51,3 +55,4 @@ runs:
     LD_DEBUG: ${{ inputs.debug }}
     LD_IGNORE_SERVICE_ERRORS: ${{ inputs.ignoreServiceErrors }}
     LD_LOOKBACK: ${{ inputs.lookback }}
+    LD_PRUNE: ${{ inputs.prune }}
