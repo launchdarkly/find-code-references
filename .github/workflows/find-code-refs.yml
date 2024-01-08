@@ -22,3 +22,4 @@ jobs:
         ignoreServiceErrors: true
         projKey: support-service
         allowTags: true
+        prune: true
