@@ -59,3 +59,4 @@ runs:
     LD_IGNORE_SERVICE_ERRORS: ${{ inputs.ignoreServiceErrors }}
     LD_LOOKBACK: ${{ inputs.lookback }}
     LD_PRUNE: ${{ inputs.prune }}
+    LD_SUBDIRECTORY: ${{ inputs.subdirectory }}
