@@ -42,6 +42,9 @@ inputs:
     default: "false"
     description: "There is a known issue where the GitHub Action will not prune deleted branch data in private repos. Only enable this if you are running the action in a public repo."
     required: false
+  subdirectory:
+    description: "The subdirectory to run the action in."
+    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -56,3 +59,4 @@ runs:
     LD_IGNORE_SERVICE_ERRORS: ${{ inputs.ignoreServiceErrors }}
     LD_LOOKBACK: ${{ inputs.lookback }}
     LD_PRUNE: ${{ inputs.prune }}
+    LD_SUBDIRECTORY: ${{ inputs.subdirectory }}

@@ -28,7 +28,7 @@ jobs:
       with:
         fetch-depth: 11 # This value must be set if the lookback configuration option is not disabled for find-code-references. Read more: https://github.com/launchdarkly/ld-find-code-refs#searching-for-unused-flags-extinctions
     - name: LaunchDarkly Code References
-      uses: launchdarkly/find-code-references@v2.12.0
+      uses: launchdarkly/find-code-references@v2.13.0
       with:
         accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
         projKey: LD_PROJECT_KEY
@@ -71,7 +71,7 @@ jobs:
       with:
         fetch-depth: 11 # This value must be set if the lookback configuration option is not disabled for find-code-references. Read more: https://github.com/launchdarkly/ld-find-code-refs#searching-for-unused-flags-extinctions
     - name: LaunchDarkly Code References
-      uses: launchdarkly/find-code-references@v2.12.0
+      uses: launchdarkly/find-code-references@v2.13.0
       with:
         accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
         projKey: LD_PROJECT_KEY
@@ -83,19 +83,20 @@ Once your workflow has been created, the best way to confirm that the workflow i
 
 If the action fails, there may be a problem with your configuration. To investigate, dig into the action's logs to view any error messages.
 
-<!-- action-docs-inputs -->
+<!-- action-docs-inputs source="action.yml" -->
 ## Inputs
 
-| parameter | description | required | default |
+| name | description | required | default |
 | --- | --- | --- | --- |
-| accessToken | A token with write access to the LaunchDarkly project. | `true` |  |
-| allowTags | Enable storing references for tags. Lists the tag as a branch. | `false` | false |
-| baseUri | The base URL of the LaunchDarkly server for this configuration. | `false` | https://app.launchdarkly.com |
-| contextLines | The number of context lines above and below a code reference for the job to send to LaunchDarkly. By default, the flag finder will not send any context lines to LaunchDarkly. If < 0, it will send no source code to LaunchDarkly. If 0, it will send only the lines containing flag references. If > 0, it will send that number of context lines above and below the flag reference. You may provide a maximum of 5 context lines. | `false` | 2 |
-| debug | Enable verbose debug logging. | `false` | false |
-| ignoreServiceErrors | If enabled, the scanner will terminate with exit code 0 when the LaunchDarkly API is unreachable or returns an unexpected response. | `false` | false |
-| lookback | Set the number of commits to search in history for whether you removed a feature flag from code. You may set to 0 to disable this feature. Setting this option to a high value will increase search time. | `false` | 10 |
-| projKey | Key of the LaunchDarkly project associated with this repository. Found under Account Settings -> Projects in the LaunchDarkly dashboard. Cannot be combined with `projects` block in configuration file. | `false` |  |
-| repoName | The repository name. Defaults to the current GitHub repository. | `false` |  |
-| prune | There is a known issue where the GitHub Action will not prune deleted branch data in private repos. Only enable this if you are running the action in a public repo. | `false` | false |
-<!-- action-docs-inputs -->
+| `accessToken` | <p>A token with write access to the LaunchDarkly project.</p> | `true` | `""` |
+| `allowTags` | <p>Enable storing references for tags. Lists the tag as a branch.</p> | `false` | `false` |
+| `baseUri` | <p>The base URL of the LaunchDarkly server for this configuration.</p> | `false` | `https://app.launchdarkly.com` |
+| `contextLines` | <p>The number of context lines above and below a code reference for the job to send to LaunchDarkly. By default, the flag finder will not send any context lines to LaunchDarkly. If < 0, it will send no source code to LaunchDarkly. If 0, it will send only the lines containing flag references. If > 0, it will send that number of context lines above and below the flag reference. You may provide a maximum of 5 context lines.</p> | `false` | `2` |
+| `debug` | <p>Enable verbose debug logging.</p> | `false` | `false` |
+| `ignoreServiceErrors` | <p>If enabled, the scanner will terminate with exit code 0 when the LaunchDarkly API is unreachable or returns an unexpected response.</p> | `false` | `false` |
+| `lookback` | <p>Set the number of commits to search in history for whether you removed a feature flag from code. You may set to 0 to disable this feature. Setting this option to a high value will increase search time.</p> | `false` | `10` |
+| `projKey` | <p>Key of the LaunchDarkly project associated with this repository. Found under Account Settings -&gt; Projects in the LaunchDarkly dashboard. Cannot be combined with <code>projects</code> block in configuration file.</p> | `false` | `""` |
+| `repoName` | <p>The repository name. Defaults to the current GitHub repository.</p> | `false` | `""` |
+| `prune` | <p>There is a known issue where the GitHub Action will not prune deleted branch data in private repos. Only enable this if you are running the action in a public repo.</p> | `false` | `false` |
+| `subdirectory` | <p>The subdirectory to run the action in.</p> | `false` | `""` |
+<!-- action-docs-inputs source="action.yml" -->
