@@ -45,6 +45,9 @@ inputs:
   subdirectory:
     description: "The subdirectory to run the action in."
     required: false
+  defaultBranch:
+    description: "The default branch. The LaunchDarkly UI will default to this branch. If not provided, will fallback to 'main'."
+    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -60,3 +63,4 @@ runs:
     LD_LOOKBACK: ${{ inputs.lookback }}
     LD_PRUNE: ${{ inputs.prune }}
     LD_SUBDIRECTORY: ${{ inputs.subdirectory }}
+    LD_DEFAULT_BRANCH: ${{ inputs.defaultBranch }}

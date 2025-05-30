@@ -99,4 +99,5 @@ If the action fails, there may be a problem with your configuration. To investig
 | `repoName` | <p>The repository name. Defaults to the current GitHub repository.</p> | `false` | `""` |
 | `prune` | <p>There is a known issue where the GitHub Action will not prune deleted branch data in private repos. Only enable this if you are running the action in a public repo.</p> | `false` | `false` |
 | `subdirectory` | <p>The subdirectory to run the action in.</p> | `false` | `""` |
+| `defaultBranch` | <p>The default branch. The LaunchDarkly UI will default to this branch. If not provided, will fallback to 'main'.</p> | `false` | `""` |
 <!-- action-docs-inputs source="action.yml" -->
