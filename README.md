@@ -28,7 +28,7 @@ jobs:
       with:
         fetch-depth: 11 # This value must be set if the lookback configuration option is not disabled for find-code-references. Read more: https://github.com/launchdarkly/ld-find-code-refs#searching-for-unused-flags-extinctions
     - name: LaunchDarkly Code References
-      uses: launchdarkly/find-code-references@v2.16.0
+      uses: launchdarkly/find-code-references@v2.17.0
       with:
         accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
         projKey: LD_PROJECT_KEY
@@ -39,6 +39,39 @@ We strongly recommend that you update the second `uses` attribute value to refer
 Commit this file under a new branch. Submit as a PR to your code reviewers to be merged into your default branch. You do not need to have this new branch merged into the default branch for code references to appear in the LaunchDarkly UI for your flags. Code references appear for this new branch as soon as it is published.
 
 As shown in the above example, the workflow should run on the `push` event, and contain an action provided by the [launchdarkly/find-code-references repository](https://github.com/launchdarkly/find-code-references). The `LD_ACCESS_TOKEN` configured in the previous step should be included as a secret, as well as a new environment variable containing your LaunchDarkly project key.
+
+## Using a private or mirrored container registry
+
+The root Action (`launchdarkly/find-code-references@v2`) is a Docker container action. GitHub always pulls its image from the registry hardcoded in that Action's Dockerfile (Docker Hub), and that image reference cannot be overridden with an input.
+
+If your organization must pull images through an internal registry or Docker Hub proxy, use the optional **`docker`** entry point in the same Action repository. It accepts a `dockerImage` input and runs the scanner with `docker run` after you authenticate to your registry.
+
+```yaml
+on: push
+name: Find LaunchDarkly flag code references
+jobs:
+  launchDarklyCodeReferences:
+    name: LaunchDarkly Code References
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 11
+    - uses: docker/login-action@v3
+      with:
+        registry: your.registry.example
+        username: ${{ secrets.REGISTRY_USER }}
+        password: ${{ secrets.REGISTRY_TOKEN }}
+    - name: LaunchDarkly Code References
+      # Pin to a release that includes the docker/ entry point (see changelog).
+      uses: launchdarkly/find-code-references/docker@v2.17.0
+      with:
+        accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
+        projKey: LD_PROJECT_KEY
+        dockerImage: your.registry.example/launchdarkly/ld-find-code-refs-github-action:2.17.0
+```
+
+Mirror the public image `launchdarkly/ld-find-code-refs-github-action` into your registry (pin `dockerImage` to the scanner image tag you mirrored; it can lag the Action tag). This entry point requires a Docker CLI on the runner (included on GitHub-hosted `ubuntu-*` runners). Existing workflows that use the root Action do not need to change.
 
 ## Additional configuration
 
@@ -71,7 +104,7 @@ jobs:
       with:
         fetch-depth: 11 # This value must be set if the lookback configuration option is not disabled for find-code-references. Read more: https://github.com/launchdarkly/ld-find-code-refs#searching-for-unused-flags-extinctions
     - name: LaunchDarkly Code References
-      uses: launchdarkly/find-code-references@v2.16.0
+      uses: launchdarkly/find-code-references@v2.17.0
       with:
         accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
         projKey: LD_PROJECT_KEY
