@@ -67,7 +67,7 @@ jobs:
       with:
         accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
         projKey: LD_PROJECT_KEY
-        dockerImage: your.registry.example/launchdarkly/ld-find-code-refs-github-action:2.18.3
+        dockerImage: your.registry.example/launchdarkly/ld-find-code-refs-github-action:2.18.4
 ```
 
 Mirror the public image `launchdarkly/ld-find-code-refs-github-action` into your registry (pin `dockerImage` to the scanner image tag you mirrored; it can lag the Action tag). This entry point requires a Docker CLI on the runner (included on GitHub-hosted `ubuntu-*` runners). Existing workflows that use the root Action do not need to change.
