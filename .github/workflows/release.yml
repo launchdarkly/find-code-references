@@ -40,26 +40,50 @@ jobs:
           fi
           echo "version=${version}" >> "$GITHUB_OUTPUT"
 
-      - name: Create release and move major tag
+      # Both steps are idempotent so a rerun finishes a release that failed
+      # partway, e.g. after the release was created but before v2 moved.
+      - name: Create release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: v${{ steps.version.outputs.version }}
           SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
-          if gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${TAG}" >/dev/null 2>&1; then
-            echo "${TAG} already exists; nothing to release."
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "${TAG} is already released."
             exit 0
           fi
           upstream="https://github.com/launchdarkly/ld-find-code-refs/releases/tag/${TAG}"
           notes=$(gh release view "$TAG" --repo launchdarkly/ld-find-code-refs --json body --jq .body 2>/dev/null || true)
           printf '%s\n\nUpdates to [ld-find-code-refs %s](%s).\n' "$notes" "$TAG" "$upstream" > "$RUNNER_TEMP/notes.md"
+          # --target only applies when the tag does not exist yet.
           gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$SHA" --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md" --latest
-          # Users reference the Action as @v2, so this is the step that ships the release.
+          echo "Released ${TAG}." | tee -a "$GITHUB_STEP_SUMMARY"
+
+      # Users reference the Action as @v2, so this is the step that ships the release.
+      - name: Move major version tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: v${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
           major="${TAG%%.*}"
-          if gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${major}" >/dev/null 2>&1; then
-            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/${major}" -f sha="${SHA}" -F force=true >/dev/null
-          else
-            gh api "repos/${GITHUB_REPOSITORY}/git/refs" -f ref="refs/tags/${major}" -f sha="${SHA}" >/dev/null
+          # Only the newest release in the series gets the major tag, so going
+          # back to an older version in the Dockerfile cannot move it backwards.
+          newest=$(gh api "repos/${GITHUB_REPOSITORY}/git/matching-refs/tags/${major}." --paginate --jq '.[].ref' \
+            | sed -nE 's|^refs/tags/(v[0-9]+\.[0-9]+\.[0-9]+)$|\1|p' | sort -V | tail -n1)
+          if [[ "$newest" != "$TAG" ]]; then
+            echo "${TAG} is not the newest ${major} release (${newest}); leaving ${major} alone."
+            exit 0
           fi
-          echo "Released ${TAG} and moved ${major} to ${SHA}." | tee -a "$GITHUB_STEP_SUMMARY"
+          sha=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${TAG}" --jq .sha)
+          current=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${major}" --jq .sha 2>/dev/null || true)
+          if [[ "$current" == "$sha" ]]; then
+            echo "${major} already points at ${TAG}."
+          elif [[ -n "$current" ]]; then
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/${major}" -f sha="${sha}" -F force=true >/dev/null
+            echo "Moved ${major} to ${TAG} (${sha})." | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            gh api "repos/${GITHUB_REPOSITORY}/git/refs" -f ref="refs/tags/${major}" -f sha="${sha}" >/dev/null
+            echo "Created ${major} at ${TAG} (${sha})." | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
