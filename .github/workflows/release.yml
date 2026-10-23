@@ -1,0 +1,90 @@
+name: Release
+
+# ld-find-code-refs pushes a release-X.Y.Z branch here after each release.
+# Once that PR merges, tag vX.Y.Z, create its release and move the major tag.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# Serialize runs so two quick pushes cannot both create the tag.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the tag and release, move the major tag
+    steps:
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+
+      - name: Read version
+        id: version
+        run: |
+          set -euo pipefail
+          version=$(sed -nE 's|^FROM launchdarkly/ld-find-code-refs-github-action:([0-9]+\.[0-9]+\.[0-9]+)$|\1|p' Dockerfile)
+          if [[ -z "$version" ]]; then
+            echo "::error::Could not read the ld-find-code-refs version from Dockerfile"
+            exit 1
+          fi
+          # The docker/ entry point defaults to the same scanner image.
+          if ! grep -qF "default: \"launchdarkly/ld-find-code-refs-github-action:${version}\"" docker/action.yml; then
+            echo "::error::docker/action.yml default dockerImage does not match Dockerfile version ${version}"
+            exit 1
+          fi
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+      # Both steps are idempotent so a rerun finishes a release that failed
+      # partway, e.g. after the release was created but before v2 moved.
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: v${{ steps.version.outputs.version }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "${TAG} is already released."
+            exit 0
+          fi
+          upstream="https://github.com/launchdarkly/ld-find-code-refs/releases/tag/${TAG}"
+          notes=$(gh release view "$TAG" --repo launchdarkly/ld-find-code-refs --json body --jq .body 2>/dev/null || true)
+          printf '%s\n\nUpdates to [ld-find-code-refs %s](%s).\n' "$notes" "$TAG" "$upstream" > "$RUNNER_TEMP/notes.md"
+          # --target only applies when the tag does not exist yet.
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$SHA" --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md" --latest
+          echo "Released ${TAG}." | tee -a "$GITHUB_STEP_SUMMARY"
+
+      # Users reference the Action as @v2, so this is the step that ships the release.
+      - name: Move major version tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: v${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          major="${TAG%%.*}"
+          # Only the newest release in the series gets the major tag, so going
+          # back to an older version in the Dockerfile cannot move it backwards.
+          newest=$(gh api "repos/${GITHUB_REPOSITORY}/git/matching-refs/tags/${major}." --paginate --jq '.[].ref' \
+            | sed -nE 's|^refs/tags/(v[0-9]+\.[0-9]+\.[0-9]+)$|\1|p' | sort -V | tail -n1)
+          if [[ "$newest" != "$TAG" ]]; then
+            echo "${TAG} is not the newest ${major} release (${newest}); leaving ${major} alone."
+            exit 0
+          fi
+          sha=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${TAG}" --jq .sha)
+          # Check existence by exit status: gh api prints the error body to
+          # stdout on a 404, so its output is never empty.
+          if ! gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${major}" >/dev/null 2>&1; then
+            gh api "repos/${GITHUB_REPOSITORY}/git/refs" -f ref="refs/tags/${major}" -f sha="${sha}" >/dev/null
+            echo "Created ${major} at ${TAG} (${sha})." | tee -a "$GITHUB_STEP_SUMMARY"
+          elif [[ "$(gh api "repos/${GITHUB_REPOSITORY}/commits/${major}" --jq .sha)" == "$sha" ]]; then
+            echo "${major} already points at ${TAG}."
+          else
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/${major}" -f sha="${sha}" -F force=true >/dev/null
+            echo "Moved ${major} to ${TAG} (${sha})." | tee -a "$GITHUB_STEP_SUMMARY"
+          fi

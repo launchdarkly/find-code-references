@@ -20,6 +20,6 @@ jobs:
         accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
         debug: true
         ignoreServiceErrors: true
-        projKey: support-service
+        projKey: developer-toolbar-sandbox
         allowTags: true
         prune: true
