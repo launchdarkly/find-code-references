@@ -1,0 +1,65 @@
+name: Release
+
+# ld-find-code-refs pushes a release-X.Y.Z branch here after each release.
+# Once that PR merges, tag vX.Y.Z, create its release and move the major tag.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# Serialize runs so two quick pushes cannot both create the tag.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the tag and release, move the major tag
+    steps:
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+
+      - name: Read version
+        id: version
+        run: |
+          set -euo pipefail
+          version=$(sed -nE 's|^FROM launchdarkly/ld-find-code-refs-github-action:([0-9]+\.[0-9]+\.[0-9]+)$|\1|p' Dockerfile)
+          if [[ -z "$version" ]]; then
+            echo "::error::Could not read the ld-find-code-refs version from Dockerfile"
+            exit 1
+          fi
+          # The docker/ entry point defaults to the same scanner image.
+          if ! grep -qF "default: \"launchdarkly/ld-find-code-refs-github-action:${version}\"" docker/action.yml; then
+            echo "::error::docker/action.yml default dockerImage does not match Dockerfile version ${version}"
+            exit 1
+          fi
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Create release and move major tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: v${{ steps.version.outputs.version }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${TAG}" >/dev/null 2>&1; then
+            echo "${TAG} already exists; nothing to release."
+            exit 0
+          fi
+          upstream="https://github.com/launchdarkly/ld-find-code-refs/releases/tag/${TAG}"
+          notes=$(gh release view "$TAG" --repo launchdarkly/ld-find-code-refs --json body --jq .body 2>/dev/null || true)
+          printf '%s\n\nUpdates to [ld-find-code-refs %s](%s).\n' "$notes" "$TAG" "$upstream" > "$RUNNER_TEMP/notes.md"
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$SHA" --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md" --latest
+          # Users reference the Action as @v2, so this is the step that ships the release.
+          major="${TAG%%.*}"
+          if gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${major}" >/dev/null 2>&1; then
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/${major}" -f sha="${SHA}" -F force=true >/dev/null
+          else
+            gh api "repos/${GITHUB_REPOSITORY}/git/refs" -f ref="refs/tags/${major}" -f sha="${SHA}" >/dev/null
+          fi
+          echo "Released ${TAG} and moved ${major} to ${SHA}." | tee -a "$GITHUB_STEP_SUMMARY"
