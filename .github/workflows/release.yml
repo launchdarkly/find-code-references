@@ -77,13 +77,14 @@ jobs:
             exit 0
           fi
           sha=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${TAG}" --jq .sha)
-          current=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${major}" --jq .sha 2>/dev/null || true)
-          if [[ "$current" == "$sha" ]]; then
-            echo "${major} already points at ${TAG}."
-          elif [[ -n "$current" ]]; then
-            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/${major}" -f sha="${sha}" -F force=true >/dev/null
-            echo "Moved ${major} to ${TAG} (${sha})." | tee -a "$GITHUB_STEP_SUMMARY"
-          else
+          # Check existence by exit status: gh api prints the error body to
+          # stdout on a 404, so its output is never empty.
+          if ! gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${major}" >/dev/null 2>&1; then
             gh api "repos/${GITHUB_REPOSITORY}/git/refs" -f ref="refs/tags/${major}" -f sha="${sha}" >/dev/null
             echo "Created ${major} at ${TAG} (${sha})." | tee -a "$GITHUB_STEP_SUMMARY"
+          elif [[ "$(gh api "repos/${GITHUB_REPOSITORY}/commits/${major}" --jq .sha)" == "$sha" ]]; then
+            echo "${major} already points at ${TAG}."
+          else
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/${major}" -f sha="${sha}" -F force=true >/dev/null
+            echo "Moved ${major} to ${TAG} (${sha})." | tee -a "$GITHUB_STEP_SUMMARY"
           fi
